@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoIt — To-Do App</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    header h1 { font-size: 1.8rem; letter-spacing: 2px; }
+    header span { font-size: 0.9rem; opacity: 0.6; }
+
+    .container { max-width: 960px; margin: 30px auto; padding: 0 20px; }
+
+    .add-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+    }
+    .add-card input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-card input:focus { border-color: #4361ee; }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #4361ee; color: white; }
+    .btn-danger  { background: #ef233c; color: white; }
+    .btn-success { background: #06d6a0; color: white; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: #555;
+      background: white;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+    .filter-tab:hover { border-color: #4361ee; color: #4361ee; }
+    .filter-tab.active { background: #4361ee; color: white; border-color: #4361ee; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 0.75rem;
+      margin-left: 4px;
+    }
+    .filter-tab:not(.active) .badge { background: #eee; color: #666; }
+
+    .tasks { display: flex; flex-direction: column; gap: 12px; }
+
+    .task-card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 5px solid #ccc;
+      transition: box-shadow 0.2s;
+    }
+    .task-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .task-card.yts     { border-left-color: #adb5bd; }
+    .task-card.pending { border-left-color: #ffd166; }
+    .task-card.done    { border-left-color: #06d6a0; opacity: 0.75; }
+
+    .task-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .task-left { flex: 1; }
+    .task-title-wrap { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .task-title { font-size: 1rem; font-weight: 600; }
+    .task-card.done .task-title { text-decoration: line-through; color: #999; }
+
+    .title-edit-icon {
+      opacity: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: #aaa;
+      transition: opacity 0.15s, background 0.15s;
+      line-height: 1;
+    }
+    .task-top:hover .title-edit-icon { opacity: 1; }
+    .title-edit-icon:hover { background: #e0e0e0; color: #333; }
+
+    .title-edit-form { display: none; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .title-edit-form input {
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border: 2px solid #4361ee;
+      border-radius: 6px;
+      outline: none;
+      min-width: 220px;
+    }
+
+    .task-left.editing .task-title-wrap { display: none; }
+    .task-left.editing .title-edit-form { display: flex; }
+    .task-meta {
+      font-size: 0.78rem;
+      color: #999;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .status-yts     { background: #e9ecef; color: #495057; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-done    { background: #d1fae5; color: #065f46; }
+    .task-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+    /* Comments */
+    .task-comment {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .comment-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+
+    .comment-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      position: relative;
+    }
+    .comment-item:hover { background: #f0f1f3; }
+
+    .comment-body { flex: 1; min-width: 0; }
+
+    .comment-text-display {
+      font-size: 0.85rem;
+      color: #444;
+      word-break: break-word;
+    }
+
+    .comment-ts {
+      font-size: 0.72rem;
+      color: #bbb;
+      margin-top: 2px;
+    }
+
+    /* inline edit form — hidden by default, shown on click */
+    .comment-edit-form {
+      display: none;
+      flex: 1;
+      gap: 6px;
+    }
+    .comment-edit-form input {
+      flex: 1;
+      padding: 5px 10px;
+      border: 1px solid #4361ee;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .comment-item.editing .comment-display { display: none; }
+    .comment-item.editing .comment-edit-form { display: flex; }
+
+    /* action icons — visible only on hover */
+    .comment-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .comment-item:hover .comment-actions { opacity: 1; }
+    .comment-item.editing .comment-actions { opacity: 0; pointer-events: none; }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: #e0e0e0; }
+    .icon-btn.del:hover { background: #fde8ea; color: #ef233c; }
+
+    /* add comment row */
+    .add-comment-form {
+      display: flex;
+      gap: 8px;
+    }
+    .add-comment-form input {
+      flex: 1;
+      padding: 7px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-comment-form input:focus { border-color: #4361ee; }
+
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    form.inline { display: inline; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>&#9989; DoIt</h1>
+  <span>Stay on top of your tasks</span>
+</header>
+
+<div class="container">
+
+  <form class="add-card" method="POST" action="/add">
+    <input type="text" name="title" placeholder="What needs to be done?" autocomplete="off" required />
+    <button class="btn btn-primary" type="submit">+ Add Task</button>
+  </form>
+
+  <div class="filter-bar">
+    <div class="filter-tabs">
+      {% set filters = [("All", "All"), ("Yet to Start", "yts"), ("Pending", "pending"), ("Done", "done")] %}
+      {% for label, key in filters %}
+        <a href="/?filter={{ label }}" class="filter-tab {% if filter_status == label %}active{% endif %}">
+          {{ label }}
+          <span class="badge">{{ counts.get(label, counts['All']) }}</span>
+        </a>
+      {% endfor %}
+    </div>
+    {% if counts['Done'] > 0 %}
+    <form method="POST" action="/clear">
+      <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Clear all Done tasks?')">
+        Clear Done
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="tasks">
+    {% if tasks %}
+      {% for task in tasks %}
+        {% if task.status == "Yet to Start" %}
+          {% set card_cls = "yts" %} {% set badge_cls = "status-yts" %}
+        {% elif task.status == "Pending" %}
+          {% set card_cls = "pending" %} {% set badge_cls = "status-pending" %}
+        {% else %}
+          {% set card_cls = "done" %} {% set badge_cls = "status-done" %}
+        {% endif %}
+
+        <div class="task-card {{ card_cls }}">
+          <div class="task-top">
+            <div class="task-left" id="tl-{{ task.id }}">
+              <div class="task-title-wrap">
+                <span class="task-title">{{ task.title }}</span>
+                <button class="title-edit-icon" type="button"
+                        onclick="startTitleEdit({{ task.id }}, '{{ task.title | e }}')"
+                        title="Edit title">&#9998;</button>
+              </div>
+              <form class="title-edit-form" method="POST" action="/edit/{{ task.id }}">
+                <input type="text" name="title" id="tedit-{{ task.id }}"
+                       value="{{ task.title }}" autocomplete="off" required/>
+                <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                <button type="button" class="btn btn-sm" style="background:#eee;color:#555"
+                        onclick="cancelTitleEdit({{ task.id }})">Cancel</button>
+              </form>
+              <div class="task-meta">
+                <span class="status-badge {{ badge_cls }}">{{ task.status }}</span>
+                <span>Created: {{ task.created }}</span>
+                {% if task.updated != task.created %}
+                  <span>Updated: {{ task.updated }}</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="task-actions">
+              {% if task.status != "Done" %}
+                <form class="inline" method="POST" action="/advance/{{ task.id }}">
+                  <button class="btn btn-sm btn-success" type="submit">
+                    {{ "Start" if task.status == "Yet to Start" else "Complete" }}
+                  </button>
+                </form>
+              {% endif %}
+              <form class="inline" method="POST" action="/delete/{{ task.id }}"
+                    onsubmit="return confirm('Delete this task?')">
+                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Comments -->
+          <div class="task-comment">
+            {% if task.comments %}
+            <div class="comment-list">
+              {% for c in task.comments %}
+              <div class="comment-item" id="ci-{{ task.id }}-{{ c.id }}">
+
+                <!-- display mode -->
+                <div class="comment-display comment-body">
+                  <div class="comment-text-display">&#128172; {{ c.text }}</div>
+                  <div class="comment-ts">{{ c.timestamp }}</div>
+                </div>
+
+                <!-- edit form (hidden until pencil clicked) -->
+                <form class="comment-edit-form"
+                      method="POST" action="/comment/{{ task.id }}/edit/{{ c.id }}">
+                  <input type="text" name="comment" value="{{ c.text }}" autocomplete="off"
+                         id="cedit-{{ task.id }}-{{ c.id }}"/>
+                  <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                  <button type="button" class="btn btn-sm" style="background:#eee;color:#555"
+                          onclick="cancelEdit('{{ task.id }}-{{ c.id }}')">Cancel</button>
+                </form>
+
+                <!-- hover actions -->
+                <div class="comment-actions">
+                  <button class="icon-btn" title="Edit"
+                          onclick="startEdit('{{ task.id }}-{{ c.id }}')">&#9998;</button>
+                  <form class="inline" method="POST"
+                        action="/comment/{{ task.id }}/delete/{{ c.id }}"
+                        onsubmit="return confirm('Delete this comment?')">
+                    <button class="icon-btn del" type="submit" title="Delete">&#128465;</button>
+                  </form>
+                </div>
+
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Add new comment -->
+            <form class="add-comment-form" method="POST" action="/comment/{{ task.id }}/add">
+              <input type="text" name="comment" placeholder="Add a comment…" autocomplete="off"/>
+              <button class="btn btn-sm btn-primary" type="submit">Add</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">
+        <div class="empty-icon">&#128203;</div>
+        <p>No tasks here. Add one above!</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+  function startEdit(key) {
+    const item = document.getElementById('ci-' + key);
+    item.classList.add('editing');
+    document.getElementById('cedit-' + key).focus();
+  }
+  function cancelEdit(key) {
+    document.getElementById('ci-' + key).classList.remove('editing');
+  }
+  function startTitleEdit(id, title) {
+    const tl = document.getElementById('tl-' + id);
+    tl.classList.add('editing');
+    const input = document.getElementById('tedit-' + id);
+    input.value = title;
+    input.focus();
+    input.select();
+  }
+  function cancelTitleEdit(id) {
+    document.getElementById('tl-' + id).classList.remove('editing');
+  }
+</script>
+</body>
+</html>
