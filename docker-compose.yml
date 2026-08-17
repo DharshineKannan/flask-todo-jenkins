@@ -1,28 +1,40 @@
 services:
- web:
-  build: ./
-  container_name: todo-app
-  ports:
-   - "5000:5000"
-  environment: 
-   - DATABASE_URL=postgresql://tododb_user:${DB_PASSWORD}@db:5432/tododb
-  depends_on:
-   db:
-    condition: service_healthy
+  web:
+    build: .
+    container_name: todo-app
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-tododb_user}:${DB_PASSWORD:?Set DB_PASSWORD in .env}@db:5432/${DB_NAME:-tododb}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=3)
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
- db:
-  image: postgres:16-alpine
-  container_name: todo-db	
-  environment:	
-   - POSTGRES_USER=tododb_user
-   - POSTGRES_PASSWORD=${DB_PASSWORD}
-   - POSTGRES_DB=tododb
-  volumes:
-   - pg_data:/var/lib/postgresql/data
-  healthcheck:
-   test: ["CMD-SHELL","pg_isready -U tododb_user"]
-   interval: 5s
-   retries: 5
+  db:
+    image: postgres:16-alpine
+    container_name: todo-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-tododb_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME:-tododb}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
- pg_data:
+  pg_data:

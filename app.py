@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 app = Flask(__name__)
 
@@ -58,6 +59,17 @@ def index():
         
     return render_template("index.html", tasks=visible, filter_status=filter_status,
                            counts=counts, statuses=STATUSES)
+
+
+@app.route("/health")
+def health():
+    """Report whether both the web process and database are ready."""
+    try:
+        db.session.execute(text("SELECT 1"))
+        return {"status": "healthy"}, 200
+    except Exception:
+        db.session.rollback()
+        return {"status": "unhealthy"}, 503
 
 
 @app.route("/add", methods=["POST"])
