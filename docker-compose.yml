@@ -38,3 +38,8 @@ services:
 
 volumes:
   pg_data:
+
+networks:
+  default:
+    name: shared-net
+    external: true

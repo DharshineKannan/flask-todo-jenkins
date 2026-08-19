@@ -50,13 +50,21 @@ A Flask and PostgreSQL task-management application packaged with Docker Compose,
 
    Do not commit `.env`. It is already excluded by `.gitignore` and `.dockerignore`.
 
-4. Build and start the containers:
+4. Create the external network used by the application and Jenkins. This is a one-time command:
+
+   ```bash
+   docker network create shared-net
+   ```
+
+   If Docker reports that `shared-net` already exists, continue to the next step.
+
+5. Build and start the containers:
 
    ```bash
    docker compose up --build -d
    ```
 
-5. Open <http://localhost:5000>.
+6. Open <http://localhost:5000>.
 
 ## Verify container health
 
@@ -109,8 +117,9 @@ Docker Compose reads these variables from `.env`:
 
 1. Clone the `main` branch from GitHub.
 2. Build the application image with Docker Compose.
-3. Recreate the Compose deployment.
-4. Run an HTTP smoke test.
+3. Create the persistent `shared-net` network if needed and attach the Jenkins container.
+4. Recreate the Compose deployment.
+5. Run an HTTP smoke test.
 
 The Jenkins environment must have:
 
@@ -118,9 +127,10 @@ The Jenkins environment must have:
 - Docker Compose v2 (`docker compose`)
 - A Jenkins secret-text credential with the ID `db-password`
 - Network access to GitHub
-- Membership in the Compose network so the smoke test can resolve `todo-app`
 
 `Dockerfile.jenkins` is the custom Jenkins image definition intended to provide the Docker CLI. The Jenkins runtime must also be configured with access to the host Docker socket or another Docker daemon before the pipeline can build or deploy containers.
+
+The application uses the external Docker network `shared-net`. The pipeline creates it when missing and attaches the executing Jenkins container using `$HOSTNAME`. Because Compose does not own an external network, `docker compose down` does not remove it; Jenkins therefore remains connected across deployments and can resolve `todo-app` during the smoke test.
 
 ## Project structure
 
