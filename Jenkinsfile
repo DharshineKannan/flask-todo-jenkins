@@ -24,8 +24,17 @@ pipeline {
         }
         stage('Smoke Test') {
             steps {
-                sh 'sleep 5'
-                sh 'curl -f http://todo-app:5000/ || exit 1'
+                sh '''
+                    for attempt in 1 2 3 4 5 6; do
+                        response=$(curl -fsS http://web:5000/health 2>/dev/null || true)
+                        if [ "$response" = '{"status":"healthy"}' ]; then
+                            exit 0
+                        fi
+                        sleep 5
+                    done
+                    echo "Health check failed: ${response:-no response}"
+                    exit 1
+                '''
             }
         }
     }

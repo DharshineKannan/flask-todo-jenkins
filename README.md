@@ -130,7 +130,14 @@ The Jenkins environment must have:
 
 `Dockerfile.jenkins` is the custom Jenkins image definition intended to provide the Docker CLI. The Jenkins runtime must also be configured with access to the host Docker socket or another Docker daemon before the pipeline can build or deploy containers.
 
-The application uses the external Docker network `shared-net`. The pipeline creates it when missing and attaches the executing Jenkins container using `$HOSTNAME`. Because Compose does not own an external network, `docker compose down` does not remove it; Jenkins therefore remains connected across deployments and can resolve `todo-app` during the smoke test.
+The application uses the external Docker network `shared-net`. The pipeline creates it when missing and attaches the executing Jenkins container using `$HOSTNAME`. Because Compose does not own an external network, `docker compose down` does not remove it; Jenkins therefore remains connected across deployments and can resolve the `web` service during the smoke test.
+
+The smoke test retries `http://web:5000/health` for up to 30 seconds and only succeeds when it receives `{"status":"healthy"}`. Because `/health` executes `SELECT 1` through SQLAlchemy, it checks both the Gunicorn process and PostgreSQL connectivity.
+
+## Infrastructure choices
+
+- **Docker Compose instead of separate Docker commands:** the application needs a web service, PostgreSQL, health-based startup ordering, persistent storage, environment configuration, and shared networking. Compose keeps that multi-container configuration declarative and repeatable.
+- **Jenkins instead of GitHub Actions:** this project demonstrates a self-hosted pipeline that builds and deploys through the Docker daemon on the deployment host. It provides hands-on experience with Jenkins credentials, pipeline stages, container networking, and deployment smoke tests.
 
 ## Project structure
 
