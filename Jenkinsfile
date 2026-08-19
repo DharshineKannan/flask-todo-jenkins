@@ -9,7 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASS')]) {
-                    sh 'echo "POSTGRES_PASSWORD=$DB_PASS" > .env'
+                    sh 'echo "DB_PASSWORD=$DB_PASS" > .env'
                     sh 'docker compose -p todo-app build'
                 }
             }

@@ -160,7 +160,7 @@ def comment_delete(task_id, comment_id):
 
 
 if __name__ == "__main__":
-    # Create the relational database tables before the server accepts traffic
+    # Local development entry point. Production runs through Gunicorn in wsgi.py.
     with app.app_context():
         db.create_all()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)

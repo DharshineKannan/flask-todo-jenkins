@@ -1,6 +1,16 @@
-# Flask To-Do App with Docker Compose
+# Flask To-Do App with Docker Compose and Jenkins
 
-A small Flask and PostgreSQL to-do application packaged with Docker Compose. Tasks and comments are stored in a persistent Docker named volume.
+A Flask and PostgreSQL task-management application packaged with Docker Compose, with a Jenkins pipeline for build, deployment, and smoke-test automation. Tasks and comments are stored in a persistent Docker named volume.
+
+## Features
+
+- Create, edit, advance, filter, and delete tasks
+- Add, edit, and delete comments associated with a task
+- Persist application data in PostgreSQL
+- Report application and database readiness through `GET /health`
+- Build and run the application and database with Docker Compose
+- Serve the Flask application with Gunicorn as an unprivileged container user
+- Define Jenkins pipeline stages for checkout, image build, deployment, and smoke testing
 
 ## Prerequisites
 
@@ -93,14 +103,39 @@ Docker Compose reads these variables from `.env`:
 
 `DB_USER` and `DB_NAME` have Compose defaults matching `.env.example`. `DB_PASSWORD` is intentionally required, so Compose stops with a clear error when it is missing.
 
+## Jenkins pipeline
+
+`Jenkinsfile` defines the following stages:
+
+1. Clone the `main` branch from GitHub.
+2. Build the application image with Docker Compose.
+3. Recreate the Compose deployment.
+4. Run an HTTP smoke test.
+
+The Jenkins environment must have:
+
+- Access to a Docker daemon
+- Docker Compose v2 (`docker compose`)
+- A Jenkins secret-text credential with the ID `db-password`
+- Network access to GitHub
+- Membership in the Compose network so the smoke test can resolve `todo-app`
+
+`Dockerfile.jenkins` is the custom Jenkins image definition intended to provide the Docker CLI. The Jenkins runtime must also be configured with access to the host Docker socket or another Docker daemon before the pipeline can build or deploy containers.
+
 ## Project structure
 
 ```text
 .
+|-- .dockerignore
+|-- .env.example
+|-- .gitignore
 |-- app.py
 |-- Dockerfile
+|-- Dockerfile.jenkins
+|-- Jenkinsfile
 |-- docker-compose.yml
 |-- requirements.txt
+|-- wsgi.py
 `-- templates/
     `-- index.html
 ```

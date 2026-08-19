@@ -324,12 +324,13 @@
               <div class="task-title-wrap">
                 <span class="task-title">{{ task.title }}</span>
                 <button class="title-edit-icon" type="button"
-                        onclick="startTitleEdit({{ task.id }}, '{{ task.title | e }}')"
+                        onclick="startTitleEdit({{ task.id }})"
                         title="Edit title">&#9998;</button>
               </div>
               <form class="title-edit-form" method="POST" action="/edit/{{ task.id }}">
                 <input type="text" name="title" id="tedit-{{ task.id }}"
-                       value="{{ task.title }}" autocomplete="off" required/>
+                       value="{{ task.title }}" data-original-title="{{ task.title }}"
+                       autocomplete="off" required/>
                 <button class="btn btn-sm btn-primary" type="submit">Save</button>
                 <button type="button" class="btn btn-sm" style="background:#eee;color:#555"
                         onclick="cancelTitleEdit({{ task.id }})">Cancel</button>
@@ -423,11 +424,11 @@
   function cancelEdit(key) {
     document.getElementById('ci-' + key).classList.remove('editing');
   }
-  function startTitleEdit(id, title) {
+  function startTitleEdit(id) {
     const tl = document.getElementById('tl-' + id);
     tl.classList.add('editing');
     const input = document.getElementById('tedit-' + id);
-    input.value = title;
+    input.value = input.dataset.originalTitle;
     input.focus();
     input.select();
   }
