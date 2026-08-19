@@ -18,7 +18,6 @@ pipeline {
             steps {
                 sh 'docker network inspect shared-net >/dev/null 2>&1 || docker network create shared-net'
                 sh 'docker network connect shared-net "$HOSTNAME" 2>/dev/null || true'
-                sh 'docker network disconnect todo-app_default "$HOSTNAME" 2>/dev/null || true'
                 sh 'docker compose -p todo-app down'
                 sh 'docker compose -p todo-app up -d'
             }
