@@ -22,13 +22,15 @@ The interface below demonstrates tasks in all three workflow states and a nested
 
 ### Verified Jenkins pipeline
 
-Jenkins Build #3 completed Checkout, Clone, Build, Deploy, Smoke Test, and Post Actions successfully against commit [`c2d75f1`](https://github.com/DharshineKannan/flask-todo-jenkins/commit/c2d75f1c96bf41f7257921df245de922e0d64644).
+Jenkins Build #9 completed Checkout, Clone, Build, Deploy, Smoke Test, and Post Actions successfully against commit [`7f7bf6c`](https://github.com/DharshineKannan/flask-todo-jenkins/commit/7f7bf6c1880b6d76122b793e3cf695ac1abc7361). That commit contains the current application and pipeline implementation; later commits only refresh repository evidence and documentation.
 
-![Successful Jenkins pipeline stage view](docs/Pipeline-success-run.png)
+![Jenkins Build 9 pipeline stage view](docs/Pipeline-success-run.png)
 
-![Jenkins Build 3 status showing the verified Git revision](docs/Pipeline-Status-Page.png)
+![Jenkins Build 9 status showing the verified Git revision](docs/Pipeline-Status-Page.png)
 
-The corresponding [Jenkins console output](docs/console-output.txt) records the cached Docker build, healthy PostgreSQL dependency, successful `GET /health` response, credential cleanup, and final `SUCCESS` result. The database credential value is masked in the transcript.
+The corresponding [Jenkins console output](docs/console-output.txt) records the ten-minute pipeline timeout, cached Docker build, healthy PostgreSQL dependency, bounded `GET /health` smoke test, credential cleanup, and final `SUCCESS` result. The database credential value is masked in the transcript.
+
+The failure path was also verified by temporarily using an invalid network target, confirming that deployment errors surfaced and the `post.failure` diagnostics ran, then restoring the valid configuration. Only the successful run is retained as repository evidence.
 
 ## Prerequisites
 
@@ -96,6 +98,18 @@ The health endpoint returns the following response after Flask can connect to Po
 ```json
 {"status":"healthy"}
 ```
+
+### Host and container URLs
+
+The correct URL depends on where the request originates:
+
+| Request origin | URL | Reason |
+| --- | --- | --- |
+| Host browser or terminal | `http://localhost:5000` | Compose publishes container port `5000` on host port `5000`. |
+| Jenkins container on `shared-net` | `http://web:5000` | Docker DNS resolves the Compose service name `web` on the shared network. |
+| Application container itself | `http://localhost:5000` | `localhost` refers to that container's own network namespace. |
+
+The Jenkins smoke test must use `http://web:5000/health`. Using `localhost` from Jenkins would target the Jenkins container itself, not the Flask container.
 
 To follow the application logs:
 
