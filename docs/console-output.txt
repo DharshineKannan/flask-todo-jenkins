@@ -1,0 +1,159 @@
+Started by user Dharshine kannan
+
+Obtained Jenkinsfile from git https://github.com/DharshineKannan/flask-todo-jenkins.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins
+ in /var/jenkins_home/workspace/Todo-App
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Todo-App/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DharshineKannan/flask-todo-jenkins.git # timeout=10
+Fetching upstream changes from https://github.com/DharshineKannan/flask-todo-jenkins.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/DharshineKannan/flask-todo-jenkins.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision c2d75f1c96bf41f7257921df245de922e0d64644 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c2d75f1c96bf41f7257921df245de922e0d64644 # timeout=10
+Commit message: "Make Jenkins deployment non-destructive"
+ > git rev-list --no-walk a9e369299f43fae0659bd087aa7e99de07201298 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Clone)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Todo-App/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DharshineKannan/flask-todo-jenkins.git # timeout=10
+Fetching upstream changes from https://github.com/DharshineKannan/flask-todo-jenkins.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/DharshineKannan/flask-todo-jenkins.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision c2d75f1c96bf41f7257921df245de922e0d64644 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c2d75f1c96bf41f7257921df245de922e0d64644 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main c2d75f1c96bf41f7257921df245de922e0d64644 # timeout=10
+Commit message: "Make Jenkins deployment non-destructive"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] withCredentials
+Masking supported pattern matches of $DB_PASS
+[Pipeline] {
+[Pipeline] sh
++ echo DB_PASSWORD=****
+[Pipeline] sh
++ docker compose -p todo-app build
+ Image todo-app-web Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 514B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 704B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.11-slim
+#3 DONE 1.6s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 79B done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 159B done
+#5 DONE 0.1s
+
+#6 [1/7] FROM docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7
+#6 resolve docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7 0.1s done
+#6 DONE 0.1s
+
+#7 [2/7] WORKDIR /app
+#7 CACHED
+
+#8 [3/7] RUN groupadd --system app && useradd --system --gid app --create-home app
+#8 CACHED
+
+#9 [4/7] COPY requirements.txt .
+#9 CACHED
+
+#10 [5/7] RUN pip install --no-cache-dir -r requirements.txt
+#10 CACHED
+
+#11 [6/7] COPY --chown=app:app app.py wsgi.py ./
+#11 CACHED
+
+#12 [7/7] COPY --chown=app:app templates/ templates/
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers done
+#13 exporting manifest sha256:49958fe7c7bc396db4dec34afd084c812b98f4efc2df280d49331c386bf87303 0.0s done
+#13 exporting config sha256:39a76e49c220375e31f4071b43bf2a305ab6aeca36eaf5a6eae1dc022e2ea429 0.0s done
+#13 exporting attestation manifest sha256:872256f552b5ec0862196d537f3a1732b79d4e2d749cebb6f4191903cec7b2a6 0.0s done
+#13 exporting manifest list sha256:c683f045a39a28fdbe5a103b12993e2cede77086f136c2645954901115e8d395
+#13 exporting manifest list sha256:c683f045a39a28fdbe5a103b12993e2cede77086f136c2645954901115e8d395 0.0s done
+#13 naming to docker.io/library/todo-app-web:latest done
+#13 unpacking to docker.io/library/todo-app-web:latest 0.0s done
+#13 DONE 0.2s
+
+#14 resolving provenance for metadata file
+#14 DONE 0.1s
+ Image todo-app-web Built 
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy)
+[Pipeline] sh
++ docker network inspect shared-net
+[Pipeline] sh
++ docker network connect shared-net dd166add2199
++ true
+[Pipeline] sh
++ docker compose -p todo-app up -d --remove-orphans
+ Container todo-app-web-1 Running 
+ Container todo-app-db-1 Running 
+ Container todo-app-db-1 Waiting 
+ Container todo-app-db-1 Healthy 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+[Pipeline] sh
++ curl -fsS http://web:5000/health
++ response={"status":"healthy"}
++ [ {"status":"healthy"} = {"status":"healthy"} ]
++ exit 0
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
++ rm -f .env
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
