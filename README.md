@@ -131,22 +131,30 @@ Docker Compose reads these variables from `.env`:
 
 ## Troubleshooting
 
-### PostgreSQL does not recover after a failed initialization
+### PostgreSQL fails to start after an incomplete or changed `.env`
 
-Current Compose configuration requires `DB_PASSWORD` before starting PostgreSQL. If the `pg_data` volume was created by an earlier failed or partial database initialization, the database may continue restarting or remain unhealthy after the password is corrected. Check the database logs first:
+**Symptom:** `docker compose up` starts the stack, but the `db` service exits or the `web` service continues reporting `/health` as unhealthy.
+
+**Cause:** The official PostgreSQL image applies `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` only when initializing an empty data directory. Changing `.env` later does not rewrite credentials or rerun initialization against an existing `pg_data` volume. This can affect a volume created by an older configuration, interrupted during initialization, or initialized with a different password.
+
+The current Compose configuration uses `${DB_PASSWORD:?…}`, so a missing or blank `DB_PASSWORD` is rejected before PostgreSQL starts. Correcting `.env` is sufficient when no database volume was initialized; volume removal is only relevant when existing local database state is incompatible or incomplete.
+
+**How to recognize it:**
 
 ```bash
 docker compose logs db
 ```
 
-For a disposable local environment, remove the failed database volume, confirm that `.env` contains a valid `DB_PASSWORD`, and recreate the stack:
+Look for `initdb` failures, authentication errors, or repeated unhealthy restarts after confirming that `.env` contains the expected credentials.
+
+**Fix for disposable local data:** remove the volume and let PostgreSQL initialize again from the corrected `.env`:
 
 ```bash
 docker compose down --volumes
 docker compose up --build -d
 ```
 
-This permanently deletes every task and comment stored in `pg_data`. Do not remove the volume when its data must be preserved; back it up and diagnose the PostgreSQL logs instead.
+**Warning:** this permanently deletes every task and comment stored in `pg_data`. Only use this reset for disposable local development data. Do not remove a production volume; preserve or back up its data and use an appropriate credential-reset, migration, or restore procedure instead.
 
 ## Jenkins pipeline
 
