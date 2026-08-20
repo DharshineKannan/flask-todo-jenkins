@@ -18,8 +18,7 @@ pipeline {
             steps {
                 sh 'docker network inspect shared-net >/dev/null 2>&1 || docker network create shared-net'
                 sh 'docker network connect shared-net "$HOSTNAME" 2>/dev/null || true'
-                sh 'docker compose -p todo-app down'
-                sh 'docker compose -p todo-app up -d'
+                sh 'docker compose -p todo-app up -d --remove-orphans'
             }
         }
         stage('Smoke Test') {
@@ -40,7 +39,11 @@ pipeline {
     }
     post {
         failure {
-            sh 'docker compose -p todo-app down'
+            sh 'docker compose -p todo-app ps || true'
+            sh 'docker compose -p todo-app logs --no-color --tail=100 web db || true'
+        }
+        cleanup {
+            sh 'rm -f .env'
         }
     }
 }

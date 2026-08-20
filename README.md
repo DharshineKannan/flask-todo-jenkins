@@ -118,7 +118,7 @@ Docker Compose reads these variables from `.env`:
 1. Clone the `main` branch from GitHub.
 2. Build the application image with Docker Compose.
 3. Create the persistent `shared-net` network if needed and attach the Jenkins container.
-4. Recreate the Compose deployment.
+4. Reconcile the Compose deployment, recreating only services whose image or configuration changed.
 5. Run an HTTP smoke test.
 
 The Jenkins environment must have:
@@ -130,7 +130,9 @@ The Jenkins environment must have:
 
 `Dockerfile.jenkins` is the custom Jenkins image definition intended to provide the Docker CLI. The Jenkins runtime must also be configured with access to the host Docker socket or another Docker daemon before the pipeline can build or deploy containers.
 
-The application uses the external Docker network `shared-net`. The pipeline creates it when missing and attaches the executing Jenkins container using `$HOSTNAME`. Because Compose does not own an external network, `docker compose down` does not remove it; Jenkins therefore remains connected across deployments and can resolve the `web` service during the smoke test.
+The application uses the external Docker network `shared-net`. The pipeline creates it when missing and attaches the executing Jenkins container using `$HOSTNAME`. Because Compose does not own an external network, it survives deployment cycles and Jenkins can resolve the `web` service during the smoke test.
+
+Deployment uses `docker compose up -d --remove-orphans` rather than stopping the complete stack first. Compose recreates the changed web service while leaving PostgreSQL running when its configuration has not changed. If the pipeline fails, Jenkins preserves the deployment and prints container status plus recent service logs for diagnosis. The temporary `.env` credential file is removed after every run.
 
 The smoke test retries `http://web:5000/health` for up to 30 seconds and only succeeds when it receives `{"status":"healthy"}`. Because `/health` executes `SELECT 1` through SQLAlchemy, it checks both the Gunicorn process and PostgreSQL connectivity.
 
