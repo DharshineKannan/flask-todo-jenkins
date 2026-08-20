@@ -129,6 +129,25 @@ Docker Compose reads these variables from `.env`:
 
 `DB_USER` and `DB_NAME` have Compose defaults matching `.env.example`. `DB_PASSWORD` is intentionally required, so Compose stops with a clear error when it is missing.
 
+## Troubleshooting
+
+### PostgreSQL does not recover after a failed initialization
+
+Current Compose configuration requires `DB_PASSWORD` before starting PostgreSQL. If the `pg_data` volume was created by an earlier failed or partial database initialization, the database may continue restarting or remain unhealthy after the password is corrected. Check the database logs first:
+
+```bash
+docker compose logs db
+```
+
+For a disposable local environment, remove the failed database volume, confirm that `.env` contains a valid `DB_PASSWORD`, and recreate the stack:
+
+```bash
+docker compose down --volumes
+docker compose up --build -d
+```
+
+This permanently deletes every task and comment stored in `pg_data`. Do not remove the volume when its data must be preserved; back it up and diagnose the PostgreSQL logs instead.
+
 ## Jenkins pipeline
 
 `Jenkinsfile` defines the following stages:
@@ -148,11 +167,11 @@ The Jenkins environment must have:
 
 `Dockerfile.jenkins` is the custom Jenkins image definition intended to provide the Docker CLI. The Jenkins runtime must also be configured with access to the host Docker socket or another Docker daemon before the pipeline can build or deploy containers.
 
-The application uses the external Docker network `shared-net`. The pipeline creates it when missing and attaches the executing Jenkins container using `$HOSTNAME`. Because Compose does not own an external network, it survives deployment cycles and Jenkins can resolve the `web` service during the smoke test.
+The application uses the external Docker network `shared-net`. The pipeline creates it when missing, checks whether the executing Jenkins container is already attached, and connects it only when necessary. An actual inspection or connection error fails the deployment instead of being ignored. Because Compose does not own the external network, it survives deployment cycles and Jenkins can resolve the `web` service during the smoke test.
 
 Deployment uses `docker compose up -d --remove-orphans` rather than stopping the complete stack first. Compose recreates the changed web service while leaving PostgreSQL running when its configuration has not changed. If the pipeline fails, Jenkins preserves the deployment and prints container status plus recent service logs for diagnosis. The temporary `.env` credential file is removed after every run.
 
-The smoke test retries `http://web:5000/health` for up to 30 seconds and only succeeds when it receives `{"status":"healthy"}`. Because `/health` executes `SELECT 1` through SQLAlchemy, it checks both the Gunicorn process and PostgreSQL connectivity.
+The smoke test retries `http://web:5000/health` within a bounded 30-second window. Each request has a three-second connection timeout and a five-second total timeout, and the stage only succeeds when it receives `{"status":"healthy"}`. Because `/health` executes `SELECT 1` through SQLAlchemy, it checks both the Gunicorn process and PostgreSQL connectivity. A pipeline-level ten-minute timeout prevents source checkout, image pulls, or builds from blocking an executor indefinitely.
 
 ## Infrastructure choices
 

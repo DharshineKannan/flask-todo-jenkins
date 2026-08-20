@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
     stages {
         stage('Clone') {
             steps {
@@ -17,19 +20,26 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh 'docker network inspect shared-net >/dev/null 2>&1 || docker network create shared-net'
-                sh 'docker network connect shared-net "$HOSTNAME" 2>/dev/null || true'
+                sh '''
+                    network_status=$(docker inspect --format '{{with index .NetworkSettings.Networks "shared-net"}}connected{{end}}' "$HOSTNAME")
+                    if [ "$network_status" != "connected" ]; then
+                        docker network connect shared-net "$HOSTNAME"
+                    fi
+                '''
                 sh 'docker compose -p todo-app up -d --remove-orphans'
             }
         }
         stage('Smoke Test') {
             steps {
                 sh '''
-                    for attempt in 1 2 3 4 5 6; do
-                        response=$(curl -fsS http://web:5000/health 2>/dev/null || true)
+                    for attempt in 1 2 3 4; do
+                        response=$(curl -fsS --connect-timeout 3 --max-time 5 http://web:5000/health 2>/dev/null || true)
                         if [ "$response" = '{"status":"healthy"}' ]; then
                             exit 0
                         fi
-                        sleep 5
+                        if [ "$attempt" -lt 4 ]; then
+                            sleep 3
+                        fi
                     done
                     echo "Health check failed: ${response:-no response}"
                     exit 1
