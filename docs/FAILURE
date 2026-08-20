@@ -1,0 +1,377 @@
+Started by user Dharshine kannan
+
+Replayed #6
+
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins
+ in /var/jenkins_home/workspace/Todo-App
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Todo-App/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DharshineKannan/flask-todo-jenkins.git # timeout=10
+Fetching upstream changes from https://github.com/DharshineKannan/flask-todo-jenkins.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/DharshineKannan/flask-todo-jenkins.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 1f20ebd847fe5d98f214cdcb0d9384fa5a3a1c80 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 1f20ebd847fe5d98f214cdcb0d9384fa5a3a1c80 # timeout=10
+Commit message: "Clarify PostgreSQL volume troubleshooting"
+ > git rev-list --no-walk 1f20ebd847fe5d98f214cdcb0d9384fa5a3a1c80 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 10 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Clone)
+
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Todo-App/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DharshineKannan/flask-todo-jenkins.git # timeout=10
+Fetching upstream changes from https://github.com/DharshineKannan/flask-todo-jenkins.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/DharshineKannan/flask-todo-jenkins.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 1f20ebd847fe5d98f214cdcb0d9384fa5a3a1c80 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 1f20ebd847fe5d98f214cdcb0d9384fa5a3a1c80 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+
+ > git branch -D main # timeout=10
+ > git checkout -b main 1f20ebd847fe5d98f214cdcb0d9384fa5a3a1c80 # timeout=10
+Commit message: "Clarify PostgreSQL volume troubleshooting"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] withCredentials
+Masking supported pattern matches of $DB_PASS
+[Pipeline] {
+[Pipeline] sh
++ echo DB_PASSWORD=****
+[Pipeline] sh
+
++ docker compose -p todo-app build
+ Image todo-app-web Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 514B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 704B done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/python:3.11-slim
+
+#3 DONE 1.9s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 79B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 159B 0.0s done
+#5 DONE 0.1s
+
+#6 [1/7] FROM docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7
+#6 resolve docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7
+#6 resolve docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7 0.2s done
+#6 DONE 0.3s
+
+
+#7 [4/7] COPY requirements.txt .
+#7 CACHED
+
+#8 [5/7] RUN pip install --no-cache-dir -r requirements.txt
+#8 CACHED
+
+#9 [6/7] COPY --chown=app:app app.py wsgi.py ./
+#9 CACHED
+
+#10 [2/7] WORKDIR /app
+#10 CACHED
+
+#11 [3/7] RUN groupadd --system app && useradd --system --gid app --create-home app
+#11 CACHED
+
+#12 [7/7] COPY --chown=app:app templates/ templates/
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers 0.0s done
+#13 exporting manifest sha256:49958fe7c7bc396db4dec34afd084c812b98f4efc2df280d49331c386bf87303 0.0s done
+#13 exporting config sha256:39a76e49c220375e31f4071b43bf2a305ab6aeca36eaf5a6eae1dc022e2ea429 0.0s done
+#13 exporting attestation manifest sha256:fc788ab25f0db3e224373b9403105208600dcaae9f2a6cc449c3193a24251e88
+#13 exporting attestation manifest sha256:fc788ab25f0db3e224373b9403105208600dcaae9f2a6cc449c3193a24251e88 0.1s done
+#13 exporting manifest list sha256:517c7bde221ec8cfc08f20ce168b48da6356f6ce218e7c9052e1adb71f172d5b
+#13 exporting manifest list sha256:517c7bde221ec8cfc08f20ce168b48da6356f6ce218e7c9052e1adb71f172d5b 0.1s done
+#13 naming to docker.io/library/todo-app-web:latest
+#13 naming to docker.io/library/todo-app-web:latest 0.0s done
+#13 unpacking to docker.io/library/todo-app-web:latest 0.1s done
+#13 DONE 0.6s
+
+
+#14 resolving provenance for metadata file
+#14 DONE 0.1s
+ Image todo-app-web Built 
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy)
+
+[Pipeline] sh
++ docker network inspect shared-net
+[Pipeline] sh
++ docker inspect --format {{with index .NetworkSettings.Networks "shared-net-FAKE"}}connected{{end}} dd166add2199
++ network_status=
++ [  != connected ]
++ docker network connect shared-net MO
+Error response from daemon: No such container: MO
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+Stage "Smoke Test" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
++ docker compose -p todo-app ps
+NAME             IMAGE                                                                     COMMAND                  SERVICE   CREATED       STATUS                 PORTS
+todo-app-db-1    postgres:16-alpine                                                        "docker-entrypoint.s…"   db        2 hours ago   Up 2 hours (healthy)   5432/tcp
+todo-app-web-1   sha256:3d68d2fd346dff76a2cc032e68651c19ab0662de2d3c077d6ca4d7cbb399cd53   "gunicorn --bind 0.0…"   web       2 hours ago   Up 2 hours (healthy)   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+[Pipeline] sh
++ docker compose -p todo-app logs --no-color --tail=100 web db
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:38:21 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:38:31 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:38:41 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:38:51 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:39:01 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:39:12 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:39:22 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:39:32 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:39:42 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:39:52 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:40:03 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:40:13 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:40:23 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:40:33 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:40:43 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:40:54 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:41:04 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:41:14 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:41:24 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:41:34 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:41:45 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:41:55 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:42:05 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:42:15 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:42:25 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:42:35 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:42:46 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:42:56 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:43:06 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:43:16 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:43:26 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:43:37 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:43:47 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:43:57 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:44:07 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:44:17 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:44:28 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:44:38 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:44:48 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:44:58 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:45:08 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:45:19 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:45:29 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:45:39 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:45:49 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:45:59 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:46:10 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:46:20 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:46:31 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:46:41 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:46:51 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:47:02 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:47:12 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:47:23 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 172.18.0.2 - - [20/Aug/2026:17:47:23 +0000] "GET /health HTTP/1.1" 200 21 "-" "curl/8.14.1"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:47:33 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:47:44 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:47:54 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 172.18.0.2 - - [20/Aug/2026:17:48:01 +0000] "GET /health HTTP/1.1" 200 21 "-" "curl/8.14.1"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:48:04 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:48:14 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:48:25 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:48:35 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:48:45 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:48:55 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:49:06 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:49:16 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:49:26 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:49:36 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:49:46 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:49:57 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:50:07 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:50:17 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:50:27 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:50:37 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:50:48 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:50:58 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:51:08 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:51:18 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:51:28 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:51:39 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:51:49 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 172.18.0.2 - - [20/Aug/2026:17:51:58 +0000] "GET /health HTTP/1.1" 200 21 "-" "curl/8.14.1"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:52:00 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:52:10 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:52:21 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:52:31 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:52:42 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:52:52 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:53:02 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:53:12 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:53:23 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:53:33 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:53:43 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:53:54 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:54:04 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:54:14 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:54:24 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:54:35 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+web-1  | 127.0.0.1 - - [20/Aug/2026:17:54:46 +0000] "GET /health HTTP/1.1" 200 21 "-" "Python-urllib/3.11"
+db-1   | The files belonging to this database system will be owned by user "postgres".
+db-1   | This user must also own the server process.
+db-1   | 
+db-1   | The database cluster will be initialized with locale "en_US.utf8".
+db-1   | The default database encoding has accordingly been set to "UTF8".
+db-1   | The default text search configuration will be set to "english".
+db-1   | 
+db-1   | Data page checksums are disabled.
+db-1   | 
+db-1   | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+db-1   | creating subdirectories ... ok
+db-1   | selecting dynamic shared memory implementation ... posix
+db-1   | selecting default max_connections ... 100
+db-1   | selecting default shared_buffers ... 128MB
+db-1   | selecting default time zone ... UTC
+db-1   | creating configuration files ... ok
+db-1   | running bootstrap script ... ok
+db-1   | sh: locale: not found
+db-1   | 2026-08-20 15:53:43.612 UTC [33] WARNING:  no usable system locales were found
+db-1   | performing post-bootstrap initialization ... ok
+db-1   | initdb: warning: enabling "trust" authentication for local connections
+db-1   | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+db-1   | syncing data to disk ... ok
+db-1   | 
+db-1   | 
+db-1   | Success. You can now start the database server using:
+db-1   | 
+db-1   |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+db-1   | 
+db-1   | waiting for server to start....2026-08-20 15:53:48.885 UTC [45] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db-1   | 2026-08-20 15:53:48.896 UTC [45] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1   | 2026-08-20 15:53:48.921 UTC [48] LOG:  database system was shut down at 2026-08-20 15:53:46 UTC
+db-1   | 2026-08-20 15:53:48.943 UTC [45] LOG:  database system is ready to accept connections
+db-1   |  done
+db-1   | server started
+db-1   | CREATE DATABASE
+db-1   | 
+db-1   | 
+db-1   | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+db-1   | 
+db-1   | 2026-08-20 15:53:49.313 UTC [45] LOG:  received fast shutdown request
+db-1   | waiting for server to shut down....2026-08-20 15:53:49.323 UTC [45] LOG:  aborting any active transactions
+db-1   | 2026-08-20 15:53:49.354 UTC [45] LOG:  background worker "logical replication launcher" (PID 51) exited with exit code 1
+db-1   | 2026-08-20 15:53:49.355 UTC [46] LOG:  shutting down
+db-1   | 2026-08-20 15:53:49.363 UTC [46] LOG:  checkpoint starting: shutdown immediate
+db-1   | 2026-08-20 15:53:50.172 UTC [46] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.331 s, sync=0.447 s, total=0.817 s; sync files=301, longest=0.041 s, average=0.002 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D60, redo lsn=0/1925D60
+db-1   | 2026-08-20 15:53:50.182 UTC [45] LOG:  database system is shut down
+db-1   |  done
+db-1   | server stopped
+db-1   | 
+db-1   | PostgreSQL init process complete; ready for start up.
+db-1   | 
+db-1   | 2026-08-20 15:53:50.324 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db-1   | 2026-08-20 15:53:50.325 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db-1   | 2026-08-20 15:53:50.325 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+db-1   | 2026-08-20 15:53:50.348 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1   | 2026-08-20 15:53:50.374 UTC [61] LOG:  database system was shut down at 2026-08-20 15:53:50 UTC
+db-1   | 2026-08-20 15:53:50.398 UTC [1] LOG:  database system is ready to accept connections
+db-1   | 2026-08-20 15:58:50.472 UTC [59] LOG:  checkpoint starting: time
+db-1   | 2026-08-20 15:58:58.853 UTC [59] LOG:  checkpoint complete: wrote 85 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.286 s, sync=0.069 s, total=8.381 s; sync files=59, longest=0.009 s, average=0.002 s; distance=262 kB, estimate=262 kB; lsn=0/1967878, redo lsn=0/1967840
+db-1   | 2026-08-20 16:01:04.710 UTC [1] LOG:  received fast shutdown request
+db-1   | 2026-08-20 16:01:04.717 UTC [1] LOG:  aborting any active transactions
+db-1   | 2026-08-20 16:01:04.720 UTC [72] FATAL:  terminating connection due to administrator command
+db-1   | 2026-08-20 16:01:04.734 UTC [1] LOG:  background worker "logical replication launcher" (PID 64) exited with exit code 1
+db-1   | 2026-08-20 16:01:04.737 UTC [59] LOG:  shutting down
+db-1   | 2026-08-20 16:01:04.744 UTC [59] LOG:  checkpoint starting: shutdown immediate
+db-1   | 2026-08-20 16:01:04.769 UTC [59] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.032 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=236 kB; lsn=0/1967928, redo lsn=0/1967928
+db-1   | 2026-08-20 16:01:04.774 UTC [1] LOG:  database system is shut down
+db-1   | 
+db-1   | PostgreSQL Database directory appears to contain a database; Skipping initialization
+db-1   | 
+db-1   | 2026-08-20 16:01:34.395 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db-1   | 2026-08-20 16:01:34.396 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db-1   | 2026-08-20 16:01:34.396 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+db-1   | 2026-08-20 16:01:34.416 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1   | 2026-08-20 16:01:34.431 UTC [27] LOG:  database system was shut down at 2026-08-20 16:01:04 UTC
+db-1   | 2026-08-20 16:01:34.448 UTC [1] LOG:  database system is ready to accept connections
+db-1   | 2026-08-20 16:04:57.567 UTC [1] LOG:  received fast shutdown request
+db-1   | 2026-08-20 16:04:57.574 UTC [1] LOG:  aborting any active transactions
+db-1   | 2026-08-20 16:04:57.589 UTC [37] FATAL:  terminating connection due to administrator command
+db-1   | 2026-08-20 16:04:57.610 UTC [1] LOG:  background worker "logical replication launcher" (PID 30) exited with exit code 1
+db-1   | 2026-08-20 16:04:57.616 UTC [25] LOG:  shutting down
+db-1   | 2026-08-20 16:04:57.624 UTC [25] LOG:  checkpoint starting: shutdown immediate
+db-1   | 2026-08-20 16:04:57.671 UTC [25] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.010 s, sync=0.013 s, total=0.055 s; sync files=4, longest=0.008 s, average=0.004 s; distance=8 kB, estimate=8 kB; lsn=0/1969980, redo lsn=0/1969980
+db-1   | 2026-08-20 16:04:57.677 UTC [1] LOG:  database system is shut down
+db-1   | 
+db-1   | PostgreSQL Database directory appears to contain a database; Skipping initialization
+db-1   | 
+db-1   | 2026-08-20 16:05:11.784 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db-1   | 2026-08-20 16:05:11.784 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db-1   | 2026-08-20 16:05:11.784 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+db-1   | 2026-08-20 16:05:11.796 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1   | 2026-08-20 16:05:11.812 UTC [26] LOG:  database system was shut down at 2026-08-20 16:04:57 UTC
+db-1   | 2026-08-20 16:05:11.823 UTC [1] LOG:  database system is ready to accept connections
+db-1   | 2026-08-20 16:10:11.919 UTC [24] LOG:  checkpoint starting: time
+db-1   | 2026-08-20 16:10:12.088 UTC [24] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.058 s, sync=0.011 s, total=0.169 s; sync files=2, longest=0.008 s, average=0.006 s; distance=0 kB, estimate=0 kB; lsn=0/1969A68, redo lsn=0/1969A30
+db-1   | 2026-08-20 17:15:12.387 UTC [24] LOG:  checkpoint starting: time
+db-1   | 2026-08-20 17:15:13.960 UTC [24] LOG:  checkpoint complete: wrote 16 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.525 s, sync=0.023 s, total=1.573 s; sync files=13, longest=0.009 s, average=0.002 s; distance=2 kB, estimate=2 kB; lsn=0/196A3C0, redo lsn=0/196A388
+
+[Pipeline] sh
++ rm -f .env
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE
