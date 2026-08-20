@@ -20,14 +20,17 @@ Fetching upstream changes from https://github.com/DharshineKannan/flask-todo-jen
  > git --version # 'git version 2.47.3'
  > git fetch --tags --force --progress -- https://github.com/DharshineKannan/flask-todo-jenkins.git +refs/heads/*:refs/remotes/origin/* # timeout=10
  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
-Checking out Revision c2d75f1c96bf41f7257921df245de922e0d64644 (refs/remotes/origin/main)
+Checking out Revision 7f7bf6c1880b6d76122b793e3cf695ac1abc7361 (refs/remotes/origin/main)
  > git config core.sparsecheckout # timeout=10
- > git checkout -f c2d75f1c96bf41f7257921df245de922e0d64644 # timeout=10
-Commit message: "Make Jenkins deployment non-destructive"
- > git rev-list --no-walk a9e369299f43fae0659bd087aa7e99de07201298 # timeout=10
+ > git checkout -f 7f7bf6c1880b6d76122b793e3cf695ac1abc7361 # timeout=10
+Commit message: "Removed unwanted file"
+ > git rev-list --no-walk c50ef8969ef46dcdc8b795c8cdb7a0e9f27a4ac5 # timeout=10
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 10 min
 [Pipeline] {
 [Pipeline] stage
 [Pipeline] { (Clone)
@@ -43,13 +46,13 @@ Fetching upstream changes from https://github.com/DharshineKannan/flask-todo-jen
  > git --version # 'git version 2.47.3'
  > git fetch --tags --force --progress -- https://github.com/DharshineKannan/flask-todo-jenkins.git +refs/heads/*:refs/remotes/origin/* # timeout=10
  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
-Checking out Revision c2d75f1c96bf41f7257921df245de922e0d64644 (refs/remotes/origin/main)
+Checking out Revision 7f7bf6c1880b6d76122b793e3cf695ac1abc7361 (refs/remotes/origin/main)
  > git config core.sparsecheckout # timeout=10
- > git checkout -f c2d75f1c96bf41f7257921df245de922e0d64644 # timeout=10
+ > git checkout -f 7f7bf6c1880b6d76122b793e3cf695ac1abc7361 # timeout=10
  > git branch -a -v --no-abbrev # timeout=10
  > git branch -D main # timeout=10
- > git checkout -b main c2d75f1c96bf41f7257921df245de922e0d64644 # timeout=10
-Commit message: "Make Jenkins deployment non-destructive"
+ > git checkout -b main 7f7bf6c1880b6d76122b793e3cf695ac1abc7361 # timeout=10
+Commit message: "Removed unwanted file"
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] stage
@@ -67,55 +70,57 @@ Masking supported pattern matches of $DB_PASS
 #1 DONE 0.0s
 
 #2 [internal] load build definition from Dockerfile
-#2 transferring dockerfile: 704B done
-#2 DONE 0.0s
+#2 transferring dockerfile: 704B 0.0s done
+#2 DONE 0.1s
 
 #3 [internal] load metadata for docker.io/library/python:3.11-slim
-#3 DONE 1.6s
+#3 DONE 1.9s
 
 #4 [internal] load .dockerignore
 #4 transferring context: 79B done
-#4 DONE 0.1s
+#4 DONE 0.0s
 
 #5 [internal] load build context
 #5 transferring context: 159B done
 #5 DONE 0.1s
 
 #6 [1/7] FROM docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7
-#6 resolve docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7 0.1s done
-#6 DONE 0.1s
+#6 resolve docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7
+#6 resolve docker.io/library/python:3.11-slim@sha256:9c900dea9e8fb7e16277c179b555cc72d29a352dbc33cff48ad5a0412fd5bfc7 0.2s done
+#6 DONE 0.2s
 
-#7 [2/7] WORKDIR /app
+#7 [5/7] RUN pip install --no-cache-dir -r requirements.txt
 #7 CACHED
 
-#8 [3/7] RUN groupadd --system app && useradd --system --gid app --create-home app
+#8 [4/7] COPY requirements.txt .
 #8 CACHED
 
-#9 [4/7] COPY requirements.txt .
+#9 [6/7] COPY --chown=app:app app.py wsgi.py ./
 #9 CACHED
 
-#10 [5/7] RUN pip install --no-cache-dir -r requirements.txt
+#10 [2/7] WORKDIR /app
 #10 CACHED
 
-#11 [6/7] COPY --chown=app:app app.py wsgi.py ./
+#11 [3/7] RUN groupadd --system app && useradd --system --gid app --create-home app
 #11 CACHED
 
 #12 [7/7] COPY --chown=app:app templates/ templates/
 #12 CACHED
 
 #13 exporting to image
+#13 exporting layers
 #13 exporting layers done
 #13 exporting manifest sha256:49958fe7c7bc396db4dec34afd084c812b98f4efc2df280d49331c386bf87303 0.0s done
 #13 exporting config sha256:39a76e49c220375e31f4071b43bf2a305ab6aeca36eaf5a6eae1dc022e2ea429 0.0s done
-#13 exporting attestation manifest sha256:872256f552b5ec0862196d537f3a1732b79d4e2d749cebb6f4191903cec7b2a6 0.0s done
-#13 exporting manifest list sha256:c683f045a39a28fdbe5a103b12993e2cede77086f136c2645954901115e8d395
-#13 exporting manifest list sha256:c683f045a39a28fdbe5a103b12993e2cede77086f136c2645954901115e8d395 0.0s done
-#13 naming to docker.io/library/todo-app-web:latest done
+#13 exporting attestation manifest sha256:acf09930aba112021ce5c68346769a7295cc6c447352c1b3b4819349036c72bd 0.1s done
+#13 exporting manifest list sha256:dd4ed31258a857e355e14f5f2e4b3e13f4efe620747e6819e012cc8e69d68945
+#13 exporting manifest list sha256:dd4ed31258a857e355e14f5f2e4b3e13f4efe620747e6819e012cc8e69d68945 0.0s done
+#13 naming to docker.io/library/todo-app-web:latest 0.0s done
 #13 unpacking to docker.io/library/todo-app-web:latest 0.0s done
-#13 DONE 0.2s
+#13 DONE 0.3s
 
 #14 resolving provenance for metadata file
-#14 DONE 0.1s
+#14 DONE 0.0s
  Image todo-app-web Built 
 [Pipeline] }
 [Pipeline] // withCredentials
@@ -126,8 +131,9 @@ Masking supported pattern matches of $DB_PASS
 [Pipeline] sh
 + docker network inspect shared-net
 [Pipeline] sh
-+ docker network connect shared-net dd166add2199
-+ true
++ docker inspect --format {{with index .NetworkSettings.Networks "shared-net"}}connected{{end}} dd166add2199
++ network_status=connected
++ [ connected != connected ]
 [Pipeline] sh
 + docker compose -p todo-app up -d --remove-orphans
  Container todo-app-web-1 Running 
@@ -139,7 +145,7 @@ Masking supported pattern matches of $DB_PASS
 [Pipeline] stage
 [Pipeline] { (Smoke Test)
 [Pipeline] sh
-+ curl -fsS http://web:5000/health
++ curl -fsS --connect-timeout 3 --max-time 5 http://web:5000/health
 + response={"status":"healthy"}
 + [ {"status":"healthy"} = {"status":"healthy"} ]
 + exit 0
@@ -151,6 +157,8 @@ Masking supported pattern matches of $DB_PASS
 + rm -f .env
 [Pipeline] }
 [Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
 [Pipeline] }
 [Pipeline] // withEnv
 [Pipeline] }
