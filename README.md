@@ -12,6 +12,24 @@ A Flask and PostgreSQL task-management application packaged with Docker Compose,
 - Serve the Flask application with Gunicorn as an unprivileged container user
 - Define Jenkins pipeline stages for checkout, image build, deployment, and smoke testing
 
+## Project evidence
+
+### Application interface
+
+The interface below demonstrates tasks in all three workflow states and a nested task comment.
+
+![Flask task-management interface with task statuses and comments](docs/Todo-App-UI.png)
+
+### Verified Jenkins pipeline
+
+Jenkins Build #3 completed Checkout, Clone, Build, Deploy, Smoke Test, and Post Actions successfully against commit [`c2d75f1`](https://github.com/DharshineKannan/flask-todo-jenkins/commit/c2d75f1c96bf41f7257921df245de922e0d64644).
+
+![Successful Jenkins pipeline stage view](docs/Pipeline-success-run.png)
+
+![Jenkins Build 3 status showing the verified Git revision](docs/Pipeline-Status-Page.png)
+
+The corresponding [Jenkins console output](docs/console-output.txt) records the cached Docker build, healthy PostgreSQL dependency, successful `GET /health` response, credential cleanup, and final `SUCCESS` result. The database credential value is masked in the transcript.
+
 ## Prerequisites
 
 - Docker Desktop, or Docker Engine with Docker Compose v2
@@ -155,6 +173,11 @@ The smoke test retries `http://web:5000/health` for up to 30 seconds and only su
 |-- docker-compose.yml
 |-- requirements.txt
 |-- wsgi.py
+|-- docs/
+|   |-- Pipeline-Status-Page.png
+|   |-- Pipeline-success-run.png
+|   |-- Todo-App-UI.png
+|   `-- console-output.txt
 `-- templates/
     `-- index.html
 ```
